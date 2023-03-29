@@ -56,16 +56,16 @@ func OpenOs(L *LState) int {
 var osFuncs = map[string]LGFunction{
 	"clock":     osClock,
 	"difftime":  osDiffTime,
-	"execute":   osExecute,
-	"exit":      osExit,
+	//"execute":   osExecute,
+	//"exit":      osExit,
 	"date":      osDate,
 	"getenv":    osGetEnv,
-	"remove":    osRemove,
-	"rename":    osRename,
-	"setenv":    osSetEnv,
-	"setlocale": osSetLocale,
+	//"remove":    osRemove,
+	//"rename":    osRename,
+	//"setenv":    osSetEnv,
+	//"setlocale": osSetLocale,
 	"time":      osTime,
-	"tmpname":   osTmpname,
+	//"tmpname":   osTmpname,
 }
 
 func osClock(L *LState) int {
