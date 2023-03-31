@@ -17,6 +17,8 @@ var tableFuncs = map[string]LGFunction{
 	"maxn":   tableMaxN,
 	"remove": tableRemove,
 	"sort":   tableSort,
+	"pack":   tablePack,
+	"unpack": tableUnpack,
 }
 
 func tableSort(L *LState) int {
@@ -97,4 +99,30 @@ func tableInsert(L *LState) int {
 	return 0
 }
 
+func tablePack(L *LState) int {
+	n := L.GetTop()
+	if n <= 0 {
+		L.RaiseError("table.pack value expected")
+	}
+	result := L.NewTable()
+	for i := 1; i <= n; i++ {
+		result.RawSetInt(i, L.Get(i))
+	}
+	L.Push(result)
+	return 1
+}
+
+func tableUnpack(L *LState) int {
+	tbl := L.CheckTable(1)
+
+	n := 0
+	for i := 1; i <= tbl.Len(); i++ {
+		ele := tbl.RawGetInt(i)
+		if ele.Type() != LTNil {
+			n++
+			L.Push(ele)
+		}
+	}
+	return n
+}
 //
