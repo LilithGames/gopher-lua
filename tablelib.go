@@ -108,6 +108,8 @@ func tablePack(L *LState) int {
 	for i := 1; i <= n; i++ {
 		result.RawSetInt(i, L.Get(i))
 	}
+	L.SetField(result, "n", LNumber(n))
+
 	L.Push(result)
 	return 1
 }
@@ -125,4 +127,5 @@ func tableUnpack(L *LState) int {
 	}
 	return n
 }
+
 //
