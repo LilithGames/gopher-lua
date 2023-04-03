@@ -101,22 +101,17 @@ func tableInsert(L *LState) int {
 
 func tablePack(L *LState) int {
 	n := L.GetTop()
-	if n <= 0 {
-		L.RaiseError("table.pack value expected")
-	}
 	result := L.NewTable()
 	for i := 1; i <= n; i++ {
 		result.RawSetInt(i, L.Get(i))
 	}
 	L.SetField(result, "n", LNumber(n))
-
 	L.Push(result)
 	return 1
 }
 
 func tableUnpack(L *LState) int {
 	tbl := L.CheckTable(1)
-
 	n := 0
 	for i := 1; i <= tbl.Len(); i++ {
 		ele := tbl.RawGetInt(i)
