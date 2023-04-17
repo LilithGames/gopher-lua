@@ -28,7 +28,7 @@ type luaLib struct {
 	libFunc LGFunction
 }
 
-var luaLibs = []luaLib{
+var luaSafeLibs = []luaLib{
 	luaLib{LoadLibName, OpenPackage},
 	luaLib{BaseLibName, OpenBase},
 	luaLib{TabLibName, OpenTable},
@@ -41,11 +41,33 @@ var luaLibs = []luaLib{
 	luaLib{CoroutineLibName, OpenCoroutine},
 }
 
+var luaLibs = []luaLib{
+	luaLib{LoadLibName, OpenPackage},
+	luaLib{BaseLibName, OpenBase},
+	luaLib{TabLibName, OpenTable},
+	luaLib{IoLibName, OpenIo},
+	luaLib{OsLibName, OpenOs},
+	luaLib{StringLibName, OpenString},
+	luaLib{MathLibName, OpenMath},
+	luaLib{DebugLibName, OpenDebug},
+	luaLib{ChannelLibName, OpenChannel},
+	luaLib{CoroutineLibName, OpenCoroutine},
+}
+
 // OpenLibs loads the built-in libraries. It is equivalent to running OpenLoad,
 // then OpenBase, then iterating over the other OpenXXX functions in any order.
-func (ls *LState) OpenLibs() {
+func (ls *LState) OpenLibs(sandboxMode bool) {
 	// NB: Map iteration order in Go is deliberately randomised, so must open Load/Base
 	// prior to iterating.
+	if sandboxMode {
+		for _, lib := range luaSafeLibs {
+			ls.Push(ls.NewFunction(lib.libFunc))
+			ls.Push(LString(lib.libName))
+			ls.Call(1, 0)
+		}
+		return
+	}
+
 	for _, lib := range luaLibs {
 		ls.Push(ls.NewFunction(lib.libFunc))
 		ls.Push(LString(lib.libName))

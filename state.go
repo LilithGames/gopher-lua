@@ -109,6 +109,8 @@ type Options struct {
 	// If `MinimizeStackMemory` is set, the call stack will be automatically grown or shrank up to a limit of
 	// `CallStackSize` in order to minimize memory usage. This does incur a slight performance penalty.
 	MinimizeStackMemory bool
+	// If SandboxMode is set, os and io libraries will be disabled.
+	SandboxMode            bool
 }
 
 /* }}} */
@@ -1352,14 +1354,17 @@ func NewState(opts ...Options) *LState {
 			CallStackSize: CallStackSize,
 			RegistrySize:  RegistrySize,
 		})
-		ls.OpenLibs()
+		ls.OpenLibs(false)
 	} else {
+
 		if opts[0].CallStackSize < 1 {
 			opts[0].CallStackSize = CallStackSize
 		}
+
 		if opts[0].RegistrySize < 128 {
 			opts[0].RegistrySize = RegistrySize
 		}
+
 		if opts[0].RegistryMaxSize < opts[0].RegistrySize {
 			opts[0].RegistryMaxSize = 0 // disable growth if max size is smaller than initial size
 		} else {
@@ -1368,9 +1373,10 @@ func NewState(opts ...Options) *LState {
 				opts[0].RegistryGrowStep = RegistryGrowStep
 			}
 		}
+
 		ls = newLState(opts[0])
 		if !opts[0].SkipOpenLibs {
-			ls.OpenLibs()
+			ls.OpenLibs(opts[0].SandboxMode)
 		}
 	}
 	return ls

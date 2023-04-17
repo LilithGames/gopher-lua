@@ -47,25 +47,39 @@ func getBoolField(L *LState, tb *LTable, key string, v bool) bool {
 	return v
 }
 
+var osSandboxFuncs = map[string]LGFunction{
+	"clock":    osClock,
+	"difftime": osDiffTime,
+	"date":     osDate,
+	"getenv":   osGetEnv,
+	"time":     osTime,
+}
+
 func OpenOs(L *LState) int {
-	osmod := L.RegisterModule(OsLibName, osFuncs)
+	osmod := L.RegisterModule(OsLibName, osDefFuncs)
 	L.Push(osmod)
 	return 1
 }
 
-var osFuncs = map[string]LGFunction{
+func OpenSafeOs(L *LState) int {
+	osmod := L.RegisterModule(OsLibName, osSandboxFuncs)
+	L.Push(osmod)
+	return 1
+}
+
+var osDefFuncs = map[string]LGFunction{
 	"clock":     osClock,
 	"difftime":  osDiffTime,
-	//"execute":   osExecute,
-	//"exit":      osExit,
+	"execute":   osExecute,
+	"exit":      osExit,
 	"date":      osDate,
 	"getenv":    osGetEnv,
-	//"remove":    osRemove,
-	//"rename":    osRename,
-	//"setenv":    osSetEnv,
-	//"setlocale": osSetLocale,
+	"remove":    osRemove,
+	"rename":    osRename,
+	"setenv":    osSetEnv,
+	"setlocale": osSetLocale,
 	"time":      osTime,
-	//"tmpname":   osTmpname,
+	"tmpname":   osTmpname,
 }
 
 func osClock(L *LState) int {
